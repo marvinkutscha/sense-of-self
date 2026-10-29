@@ -45,16 +45,7 @@ export const createHero = ({
       vec2 hash2(vec2 p) {
         return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453);
       }
-      float noise(vec2 p) {
-        vec2 i = floor(p);
-        vec2 f = fract(p);
-        f = f * f * (3.0 - 2.0 * f);
-        float a = fract(sin(dot(i, vec2(12.9898, 78.233))) * 43758.5453);
-        float b = fract(sin(dot(i + vec2(1.0, 0.0), vec2(12.9898, 78.233))) * 43758.5453);
-        float c = fract(sin(dot(i + vec2(0.0, 1.0), vec2(12.9898, 78.233))) * 43758.5453);
-        float d = fract(sin(dot(i + vec2(1.0, 1.0), vec2(12.9898, 78.233))) * 43758.5453);
-        return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-      }
+
       float worley(vec2 p, float t) {
         vec2 n = floor(p);
         vec2 f = fract(p);
@@ -63,57 +54,72 @@ export const createHero = ({
           for (int i = -1; i <= 1; i++) {
             vec2 g = vec2(float(i), float(j));
             vec2 o = hash2(n + g);
-            o = 0.5 + 0.45 * sin(t * 0.45 + 6.2831 * o);
+            o = 0.5 + 0.40 * sin(t * 0.35 + 6.283185 * o);
             vec2 delta = g + o - f;
             d = min(d, length(delta));
           }
         }
-        return d;
+        return 1.0 - d;
       }
-      float sampleLight(vec2 p, vec2 dir, vec2 perp, float t) {
-        float ortho = dot(p, perp);
-        float b1 = sin(ortho * 3.6 - t * 0.22) * 0.5 + 0.5;
-        float b2 = sin(ortho * 7.5 + t * 0.15) * 0.35 + 0.35;
-        float b3 = sin(ortho * 1.5 - t * 0.09) * 0.5 + 0.5;
-        float beams = b1 * 0.50 + b2 * 0.28 + b3 * 0.22;
-        float w = worley(p * 2.5 - dir * (t * 0.25), t);
-        float caustics = 1.0 - smoothstep(0.12, 0.82, w);
-        float drift = noise(p * 1.3 + vec2(t * 0.04, -t * 0.03));
-        float total = mix(beams, caustics, 0.45);
-        total *= (0.75 + 0.25 * drift);
-        return clamp(total, 0.0, 1.0);
+
+      float sampleLight(vec2 uv, vec2 dir, vec2 perp, float t) {
+        float along = uv.x * dir.x + uv.y * dir.y;
+        float ortho = uv.x * perp.x + uv.y * perp.y;
+
+        vec2 warp = vec2(
+          sin(ortho * 4.0 + t * 0.18) * 0.06 + sin(along * 2.0 - t * 0.12) * 0.03,
+          cos(along * 2.2 + t * 0.14) * 0.04 + cos(ortho * 2.5 - t * 0.10) * 0.03
+        );
+        vec2 p = (vec2(along + warp.y, ortho + warp.x)) * vec2(1.1, 4.5);
+        float w1 = worley(p, t);
+        float w2 = worley(p * 1.6 + vec2(3.1, 1.7), t * 1.1) * 0.45;
+        float caustics = w1 * 0.65 + w2 * 0.35;
+
+        float b1 = sin((ortho + warp.x * 0.4) * 11.5 - t * 0.12) * 0.5 + 0.5;
+        float b2 = sin((ortho + warp.x * 0.25) * 21.0 + t * 0.08) * 0.35 + 0.35;
+        float b3 = sin((ortho) * 6.0 - t * 0.05) * 0.5 + 0.5;
+        float beams = b1 * 0.45 + b2 * 0.28 + b3 * 0.27;
+
+        float beamFocus = exp(-pow((ortho - 0.15) * 0.85, 2.0));
+        float total = (caustics * 0.40 + beams * 0.60) * (0.35 + 0.65 * beamFocus);
+        return smoothstep(0.18, 0.76, total);
       }
+
       void main() {
         vec2 st = gl_FragCoord.xy / u_resolution.xy;
         float aspect = u_resolution.x / u_resolution.y;
         vec2 uv = st;
         uv.x *= aspect;
-        float rad = radians(36.0);
-        vec2 dir = vec2(cos(rad), sin(rad));
+
+        float rad = radians(40.0);
+        vec2 dir = normalize(vec2(cos(rad), -sin(rad)));
         vec2 perp = vec2(-dir.y, dir.x);
-        float t = u_time * 0.85;
 
-        float chrOffset = 0.016;
-        float lightR = sampleLight(uv - perp * chrOffset, dir, perp, t);
+        float t = u_time * 0.75;
+
+        float chr = 0.010;
+        float lightR = sampleLight(uv - perp * chr, dir, perp, t);
         float lightG = sampleLight(uv, dir, perp, t);
-        float lightB = sampleLight(uv + perp * chrOffset, dir, perp, t);
+        float lightB = sampleLight(uv + perp * chr, dir, perp, t);
 
-        vec3 colShadow = vec3(0.780, 0.710, 0.650);
-        vec3 colBase   = vec3(0.945, 0.929, 0.902);
-        vec3 colGold   = vec3(0.850, 0.740, 0.620);
-        vec3 colSun    = vec3(1.000, 0.965, 0.880);
-        vec3 colGleam  = vec3(1.000, 0.992, 0.965);
+        vec3 colBg    = vec3(0.782, 0.778, 0.776);
+        vec3 colTaupe = vec3(0.675, 0.650, 0.645);
+        vec3 colSun   = vec3(0.995, 0.985, 0.965);
+        vec3 colGleam = vec3(1.000, 1.000, 1.000);
 
-        vec3 col;
-        col.r = mix(colShadow.r, colSun.r, pow(lightR, 1.35));
-        col.g = mix(colBase.g,   colSun.g, pow(lightG, 1.35));
-        col.b = mix(colGold.b,   colSun.b, pow(lightB, 1.35));
+        float r = mix(colTaupe.r, colSun.r, smoothstep(0.18, 0.82, lightR));
+        float g = mix(colTaupe.g, colSun.g, smoothstep(0.18, 0.82, lightG));
+        float b = mix(colTaupe.b, colSun.b, smoothstep(0.18, 0.82, lightB));
+        vec3 col = vec3(r, g, b);
 
-        float gleam = pow(lightG, 2.8);
-        col = mix(col, colGleam, gleam * 0.55);
+        col = mix(colBg, col, 0.68);
 
-        float bottomFade = smoothstep(0.0, 0.14, st.y);
-        col = mix(colBase, col, bottomFade);
+        float gleam = smoothstep(0.68, 0.94, lightG);
+        col = mix(col, colGleam, gleam * 0.45);
+
+        vec3 colPageBg = vec3(0.945, 0.929, 0.902);
+        float bottomFade = smoothstep(0.0, 0.12, st.y);
+        col = mix(colPageBg, col, bottomFade);
 
         gl_FragColor = vec4(col, 1.0);
       }
