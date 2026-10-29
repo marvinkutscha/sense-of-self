@@ -131,11 +131,7 @@ export const createHero = ({
         float gleam = smoothstep(0.68, 0.94, lightG);
         col = mix(col, colGleam, gleam * 0.45);
 
-        // Seamless bottom blend into section background (#F1EDE6)
-        vec3 colPageBg = vec3(0.945, 0.929, 0.902);
-        float bottomFade = smoothstep(0.0, 0.12, st.y);
-        col = mix(colPageBg, col, bottomFade);
-
+        // Continuous full-viewport sunlight curtain
         gl_FragColor = vec4(col, 1.0);
       }
     `;

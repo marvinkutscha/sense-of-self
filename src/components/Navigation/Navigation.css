@@ -3,18 +3,26 @@
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
   width: 100%;
-  background: rgba(241, 237, 230, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border-subtle);
-  transition: background-color 0.4s ease, border-color 0.4s ease;
+  background: transparent !important;
+  border-bottom: none !important;
 }
 
-.site-header[data-theme="dark"] {
-  background: rgba(58, 45, 40, 0.92);
-  border-bottom-color: rgba(255, 255, 255, 0.1);
+/* Progressive Blur */
+.site-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 140%;
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.75) 55%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.75) 55%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .site-header-wrap {
@@ -27,6 +35,7 @@
   padding: 0 var(--edge-padding) !important;
   margin: 0 !important;
   box-sizing: border-box !important;
+  background: transparent !important;
 }
 
 .site-header .brand {
@@ -43,12 +52,8 @@
   font-weight: 600 !important;
   letter-spacing: 0.08em !important;
   text-transform: uppercase !important;
-  color: var(--text-dark) !important;
+  color: #000000 !important;
   line-height: 1 !important;
-}
-
-.site-header[data-theme="dark"] .brand-name {
-  color: var(--text-light) !important;
 }
 
 .site-header .nav {
@@ -60,22 +65,14 @@
 .site-header .nav a {
   font-family: var(--font-body);
   font-size: 0.98rem;
-  color: var(--text-dark);
+  color: #000000;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
 }
 
 .site-header .nav a:hover {
-  color: var(--text-muted);
-}
-
-.site-header[data-theme="dark"] .nav a {
-  color: var(--text-light);
-}
-
-.site-header[data-theme="dark"] .nav a:hover {
-  color: var(--text-light-muted);
+  color: rgba(0, 0, 0, 0.55);
 }
 
 .site-header .btn-nav {
@@ -83,12 +80,12 @@
   color: #ffffff;
   padding: 10px 22px;
   border-radius: var(--border-radius-pill);
+  border: 1.5px solid #000000;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
-
-.site-header[data-theme="dark"] .btn-nav {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
+.site-header .btn-nav:hover {
+  background: #262626;
+  color: #ffffff;
 }
 
 .menu-toggle {
