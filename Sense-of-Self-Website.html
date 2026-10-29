@@ -1894,12 +1894,10 @@ section.einladung { padding-bottom: calc(56px + 72px); }
       <button class="menu-toggle" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span></button>
       <nav class="nav" id="nav">
         <a href="#start">Start</a>
-        <a href="#angebote">Angebote für dich</a>
-        <a href="#yoga">Yoga</a>
-        <a href="#human-design">Human Design</a>
-        <a href="#akasha">Akasha-Chronik</a>
+        <a href="#angebote">Angebote</a>
         <a href="#ueber-mich">Über mich</a>
-        <a href="#kontakt">Schreib mir</a>
+        <a href="#kontakt">Kontakt</a>
+        <a class="btn" href="#kennenlernen">Kennenlernen</a>
       </nav>
     </div>
   </header>
@@ -2180,7 +2178,7 @@ section.einladung { padding-bottom: calc(56px + 72px); }
             <!-- Top Bar: Step Indicator (Centered, No redundant arrows) -->
             <div class="booking-top-bar">
               <div class="booking-step-indicator-wrap" id="bookingStepIndicatorWrap">
-                <span class="step-progress-label" id="stepProgressLabel">Schritt 1 von 6: Dein Name</span>
+                <span class="step-progress-label" id="stepProgressLabel">Schritt 1 von 7: Dein Name</span>
                 <div class="booking-step-dots">
                   <span class="step-dot active" data-step-dot="1"></span>
                   <span class="step-dot" data-step-dot="2"></span>
@@ -2188,11 +2186,12 @@ section.einladung { padding-bottom: calc(56px + 72px); }
                   <span class="step-dot" data-step-dot="4"></span>
                   <span class="step-dot" data-step-dot="5"></span>
                   <span class="step-dot" data-step-dot="6"></span>
+                  <span class="step-dot" data-step-dot="7"></span>
                 </div>
               </div>
             </div>
 
-            <!-- Slides Container -->
+                        <!-- Slides Container -->
             <div class="booking-slides-container">
               
               <!-- STEP 1: Nur der Name -->
@@ -2213,20 +2212,16 @@ section.einladung { padding-bottom: calc(56px + 72px); }
                 </div>
               </div>
 
-              <!-- STEP 2: E-Mail & Telefon -->
+              <!-- STEP 2: Paketauswahl / Deine Variante -->
               <div class="conversational-slide" id="convSlide2">
-                <p class="slide-eyebrow">Kontaktdaten</p>
-                <h2 class="slide-title">Schön, dich kennenzulernen, <span class="conv-dyn-name">dich</span>!</h2>
-                <p class="slide-subtitle">Wie lautet deine E-Mail-Adresse? Und möchtest du vorab per SMS oder WhatsApp an deinen Termin erinnert werden?</p>
-                
-                <div class="slide-input-wrap">
-                  <label class="conv-field-label">Deine E-Mail-Adresse *</label>
-                  <input type="email" class="conv-input-medium" id="convInputEmail" placeholder="name@beispiel.de" autocomplete="email" onkeydown="if(event.key==='Enter') goToStep(3)">
-                  
-                  <label class="conv-field-label" style="margin-top:20px;">Mobilnummer (optional für Terminerinnerung)</label>
-                  <input type="tel" class="conv-input-medium" id="convInputPhone" placeholder="+49 15... (WhatsApp oder SMS)">
+                <p class="slide-eyebrow">Deine Variante</p>
+                <h2 class="slide-title">Welche Variante wünschst du dir, <span class="conv-dyn-name">du</span>?</h2>
+                <p class="slide-subtitle">Wähle die passende Option für dein persönliches Anliegen:</p>
+
+                <div id="convTierOptionsContainer" class="mode-cards-grid" style="margin:20px 0;grid-template-columns:1fr;gap:14px;">
+                  <!-- Dynamically populated in JavaScript -->
                 </div>
-                
+
                 <div class="slide-nav-bar">
                   <button type="button" class="btn-ghost-step" onclick="goToStep(1)">← Zurück</button>
                   <button type="button" class="btn conv-next-btn" onclick="goToStep(3)">
@@ -2235,8 +2230,30 @@ section.einladung { padding-bottom: calc(56px + 72px); }
                 </div>
               </div>
 
-              <!-- STEP 3: Modus -->
+              <!-- STEP 3: E-Mail & Telefon -->
               <div class="conversational-slide" id="convSlide3">
+                <p class="slide-eyebrow">Kontaktdaten</p>
+                <h2 class="slide-title">Schön, dich kennenzulernen, <span class="conv-dyn-name">du</span>!</h2>
+                <p class="slide-subtitle">Wie lautet deine E-Mail-Adresse? Und möchtest du vorab per SMS oder WhatsApp an deinen Termin erinnert werden?</p>
+                
+                <div class="slide-input-wrap">
+                  <label class="conv-field-label">Deine E-Mail-Adresse *</label>
+                  <input type="email" class="conv-input-medium" id="convInputEmail" placeholder="name@beispiel.de" autocomplete="email" onkeydown="if(event.key==='Enter') goToStep(4)">
+                  
+                  <label class="conv-field-label" style="margin-top:20px;">Mobilnummer (optional für Terminerinnerung)</label>
+                  <input type="tel" class="conv-input-medium" id="convInputPhone" placeholder="+49 15... (WhatsApp oder SMS)">
+                </div>
+                
+                <div class="slide-nav-bar">
+                  <button type="button" class="btn-ghost-step" onclick="goToStep(2)">← Zurück</button>
+                  <button type="button" class="btn conv-next-btn" onclick="goToStep(4)">
+                    <span>Weiter zu Schritt 4 →</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- STEP 4: Modus / Begegnung -->
+              <div class="conversational-slide" id="convSlide4">
                 <p class="slide-eyebrow">Begegnung</p>
                 <h2 class="slide-title">Wo möchtest du dich begegnen?</h2>
                 <p class="slide-subtitle">Wähle das Format, das sich für dich am stimmigsten anfühlt.</p>
@@ -2258,20 +2275,20 @@ section.einladung { padding-bottom: calc(56px + 72px); }
                 </div>
 
                 <div class="slide-nav-bar">
-                  <button type="button" class="btn-ghost-step" onclick="goToStep(2)">← Zurück</button>
-                  <button type="button" class="btn conv-next-btn" onclick="goToStep(4)">
-                    <span>Weiter zu Schritt 4 →</span>
+                  <button type="button" class="btn-ghost-step" onclick="goToStep(3)">← Zurück</button>
+                  <button type="button" class="btn conv-next-btn" onclick="goToStep(5)">
+                    <span>Weiter zu Schritt 5 →</span>
                   </button>
                 </div>
               </div>
 
-              <!-- STEP 4: Auswahl freier Termine (Doctolib-Style) -->
-              <div class="conversational-slide" id="convSlide4">
+              <!-- STEP 5: Auswahl freier Termine (Doctolib-Style mit konkreten Uhrzeiten) -->
+              <div class="conversational-slide" id="convSlide5">
                 <p class="slide-eyebrow">Wunschtermin</p>
                 <h2 class="slide-title">Wann passt es dir?</h2>
-                <p class="slide-subtitle">Wähle einen Wunschtag und eine Tageszeit. Den genauen Termin bestätige ich dir persönlich.</p>
+                <p class="slide-subtitle">Wähle ganz konkret einen Tag und eine Uhrzeit aus. Den Termin bestätige ich dir persönlich.</p>
 
-                <!-- Cal.com / Calendly Live Embed Container (wird aktiv, wenn URL hinterlegt ist) -->
+                <!-- Cal.com / Calendly Live Embed Container (optional) -->
                 <div id="calEmbedContainer" style="display:none;margin-bottom:24px;">
                   <iframe id="calIframe" src="" style="width:100%;height:460px;border:0;border-radius:16px;"></iframe>
                 </div>
@@ -2284,11 +2301,11 @@ section.einladung { padding-bottom: calc(56px + 72px); }
                   <!-- Slot-Zeiten für den gewählten Tag -->
                   <div class="doctolib-slots-box" id="doctolibSlotsBox">
                     <div class="doctolib-time-group">
-                      <div class="time-group-header">☀️ Tageszeit</div>
+                      <div class="time-group-header">☀️ Vormittags</div>
                       <div class="time-slots-grid" id="doctolibMorningSlots"></div>
                     </div>
                     <div class="doctolib-time-group">
-                      <div class="time-group-header">🌤️ Später am Tag</div>
+                      <div class="time-group-header">🌤️ Nachmittags &amp; Abends</div>
                       <div class="time-slots-grid" id="doctolibAfternoonSlots"></div>
                     </div>
                   </div>
@@ -2296,7 +2313,7 @@ section.einladung { padding-bottom: calc(56px + 72px); }
                   <!-- Ausgewählter Termin Bestätigung -->
                   <div class="selected-slot-feedback" id="selectedSlotFeedback">
                     <span class="slot-check-icon">✓</span>
-                    <span>Dein Wunsch: <strong id="selectedSlotText">Bitte Tag und Tageszeit wählen</strong></span>
+                    <span>Dein Wunschtermin: <strong id="selectedSlotText">Bitte Tag und Uhrzeit wählen</strong></span>
                   </div>
 
                   <!-- Wunschtermin Option -->
@@ -2309,15 +2326,15 @@ section.einladung { padding-bottom: calc(56px + 72px); }
                 </div>
 
                 <div class="slide-nav-bar">
-                  <button type="button" class="btn-ghost-step" onclick="goToStep(3)">← Zurück</button>
-                  <button type="button" class="btn conv-next-btn" onclick="goToStep(5)">
-                    <span>Weiter zu Schritt 5 →</span>
+                  <button type="button" class="btn-ghost-step" onclick="goToStep(4)">← Zurück</button>
+                  <button type="button" class="btn conv-next-btn" onclick="goToStep(6)">
+                    <span>Weiter zu Schritt 6 →</span>
                   </button>
                 </div>
               </div>
 
-              <!-- STEP 5: Fragen & Anmerkungen -->
-              <div class="conversational-slide" id="convSlide5">
+              <!-- STEP 6: Fragen & Anmerkungen -->
+              <div class="conversational-slide" id="convSlide6">
                 <p class="slide-eyebrow">Dein Anliegen</p>
                 <h2 class="slide-title">Gibt es etwas, das du mir mitgeben möchtest?</h2>
                 <p class="slide-subtitle">Was bewegt dich aktuell? Eine konkrete Frage oder ein Thema, das dir am Herzen liegt (völlig freiwillig).</p>
@@ -2327,22 +2344,22 @@ section.einladung { padding-bottom: calc(56px + 72px); }
                 </div>
 
                 <div class="slide-nav-bar">
-                  <button type="button" class="btn-ghost-step" onclick="goToStep(4)">← Zurück</button>
-                  <button type="button" class="btn conv-next-btn" onclick="goToStep(6)">
+                  <button type="button" class="btn-ghost-step" onclick="goToStep(5)">← Zurück</button>
+                  <button type="button" class="btn conv-next-btn" onclick="goToStep(7)">
                     <span>Zur Übersicht &amp; Bestätigung →</span>
                   </button>
                 </div>
               </div>
 
-              <!-- STEP 6: Übersicht zur Bestätigung & Verbindlich buchen -->
-              <div class="conversational-slide" id="convSlide6">
+              <!-- STEP 7: Übersicht zur Bestätigung & Verbindlich buchen -->
+              <div class="conversational-slide" id="convSlide7">
                 <p class="slide-eyebrow">Fast geschafft</p>
                 <h2 class="slide-title">Deine Anfrage im Überblick</h2>
                 <p class="slide-subtitle">Prüfe noch einmal kurz deine Angaben. Danach öffnet sich dein E-Mail-Programm mit deiner fertigen Anfrage an mich.</p>
 
                 <div class="booking-summary-card">
                   <div class="summary-row">
-                    <span class="summary-label">Angebot</span>
+                    <span class="summary-label">Angebot &amp; Variante</span>
                     <strong class="summary-val" id="sumOfferTitle">Akasha-Chronik-Lesung</strong>
                   </div>
                   <div class="summary-row">
@@ -2350,8 +2367,8 @@ section.einladung { padding-bottom: calc(56px + 72px); }
                     <span class="summary-val" id="sumOfferMode">💻 Online via Video-Call</span>
                   </div>
                   <div class="summary-row">
-                    <span class="summary-label">Wunschzeit</span>
-                    <span class="summary-val" id="sumOfferTime">Nächste Woche · Vormittags</span>
+                    <span class="summary-label">Wunschtermin</span>
+                    <span class="summary-val" id="sumOfferTime">Fr, 30. Okt um 09:30 Uhr</span>
                   </div>
                   <div class="summary-row">
                     <span class="summary-label">Kontakt</span>
@@ -2369,7 +2386,7 @@ section.einladung { padding-bottom: calc(56px + 72px); }
 
                 <div class="slide-nav-bar" style="flex-direction:column;align-items:stretch;gap:12px;">
                   <button type="button" class="btn conv-submit-btn" onclick="submitConversationalBooking()">
-                    <span>✉️ Anfrage per E-Mail senden</span>
+                    <span>📅 Verbindliche Terminanfrage absenden</span>
                   </button>
                   <button type="button" class="btn-ghost-step" onclick="goToStep(1)" style="text-align:center;">
                     ← Angaben noch einmal bearbeiten
@@ -3527,6 +3544,8 @@ section.einladung { padding-bottom: calc(56px + 72px); }
   window.openOfferOverlay = openOfferOverlay;
   window.closeOfferOverlay = closeOfferOverlay;
   window.selectAkashaTier = selectAkashaTier;
+  window.selectTier = selectTier;
+  window.selectFlowTier = selectFlowTier;
   window.goToStep = goToStep;
   window.handleStepBack = handleStepBack;
   window.selectBookingMode = selectBookingMode;
