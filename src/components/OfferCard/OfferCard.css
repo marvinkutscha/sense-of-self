@@ -9,12 +9,12 @@
 }
 
 .offer-card {
-  background: #ffffff;
-  border: 1px solid var(--border-subtle);
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: var(--border-radius-card);
   padding: 36px 32px;
-  box-shadow: var(--box-shadow-card);
-  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  box-shadow: none;
+  transition: transform 0.28s ease, border-color 0.25s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -22,7 +22,7 @@
 
 .offer-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--box-shadow-hover);
+  border-color: rgba(0, 0, 0, 1);
 }
 
 .card-title {

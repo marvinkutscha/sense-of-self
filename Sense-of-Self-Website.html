@@ -2045,20 +2045,12 @@ section {
   padding: 0 !important;
 }
 
-/* Cards retain subtle translucent glass look on the shifting background */
-.card {
-  background: rgba(255, 255, 255, 0.88) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  box-shadow: 0 16px 40px rgba(37, 20, 16, 0.06) !important;
-}
-.quotes .quote {
-  background: rgba(255, 255, 255, 0.82) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(0, 0, 0, 0.05) !important;
-  box-shadow: 0 12px 32px rgba(37, 20, 16, 0.04) !important;
+/* Cards retain clean transparent surface with responsive borders */
+.card, .quotes .quote {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid rgba(0, 0, 0, 0.3) !important;
+  box-shadow: none !important;
 }
 
 /* Adaptive Header based on active theme */
@@ -2181,11 +2173,32 @@ p, .lead, .einstieg,
   color: #000000 !important;
 }
 
-/* Cards & Floating surfaces: Pure White with crisp shadows */
-.card, .quote, .testimonial-card-box {
-  background: #ffffff !important;
-  border: 1px solid rgba(58, 45, 40, 0.12) !important;
-  box-shadow: 0 16px 40px rgba(58, 45, 40, 0.07) !important;
+/* Cards & Floating surfaces: Transparent background, rgba(0,0,0,0.3) border, rgba(0,0,0,1) on hover */
+.card,
+.testimonial-card-box,
+.quote,
+.quotes .quote,
+.mode-select-card,
+.conv-tier-card,
+.booking-summary-card,
+.slot-time-card {
+  background-color: transparent !important;
+  background: transparent !important;
+  border: 1px solid rgba(0, 0, 0, 0.3) !important;
+  box-shadow: none !important;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.card:hover,
+.testimonial-carousel-card:hover .testimonial-card-box,
+.testimonial-card-box:hover,
+.quote:hover,
+.quotes .quote:hover,
+.mode-select-card:hover,
+.conv-tier-card:hover,
+.booking-summary-card:hover,
+.slot-time-card:hover {
+  border-color: rgba(0, 0, 0, 1) !important;
 }
 
 /* All interactive buttons: Monochrome Black */
@@ -2286,30 +2299,28 @@ p, .lead, .einstieg,
 }
 
 .testimonial-card-box {
-  background: #ffffff !important;
-  border: 1px solid rgba(58, 45, 40, 0.12) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid rgba(0, 0, 0, 0.3) !important;
   border-radius: 24px !important;
   padding: 36px 32px;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 14px 36px rgba(58, 45, 40, 0.06) !important;
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s ease;
+  box-shadow: none !important;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease !important;
   user-select: none;
 }
-.testimonial-carousel-card:hover .testimonial-card-box {
+.testimonial-carousel-card:hover .testimonial-card-box,
+.testimonial-card-box:hover {
   transform: translateY(-4px);
-  box-shadow: 0 24px 50px rgba(58, 45, 40, 0.12) !important;
-  border-color: #3A2D28 !important;
+  border-color: rgba(0, 0, 0, 1) !important;
+  box-shadow: none !important;
 }
 .testimonial-carousel-card:focus-visible .testimonial-card-box {
-  outline: 2px solid #3A2D28;
+  outline: 2px solid rgba(0, 0, 0, 1);
   outline-offset: 3px;
-}
-.testimonial-card-box:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 22px 50px rgba(58, 45, 40, 0.1) !important;
 }
 
 .quote-lead-symbol {
