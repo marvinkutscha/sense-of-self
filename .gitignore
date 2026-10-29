@@ -1,0 +1,6 @@
+.DS_Store
+.netlify/
+.vercel/
+index.html.backup
+shader.gif
+*.mp4
