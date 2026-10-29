@@ -2648,7 +2648,7 @@ body[data-active-theme="dark"] .menu-toggle span {
             setTimeout(function(){ overlay.style.display = "none"; }, 480);
           }
           if (typeof ScrollTrigger !== "undefined") {
-            setTimeout(function(){ ScrollTrigger.refresh(); }, 500);
+            setTimeout(function(){ ScrollTrigger.refresh(); if (window.resizeSunlightShader) window.resizeSunlightShader(); }, 500);
           }
         } else {
           if (err) err.style.display = "block";
@@ -3279,8 +3279,12 @@ body[data-active-theme="dark"] .menu-toggle span {
     var canvas = document.getElementById("sunlightShaderCanvas");
     if (!canvas) return;
 
-    var gl = canvas.getContext("webgl", { alpha: true, antialias: true, powerPreference: "low-power" });
-    if (!gl) return;
+    var gl = canvas.getContext("webgl", { alpha: true, antialias: true, powerPreference: "default" }) ||
+             canvas.getContext("experimental-webgl", { alpha: true, antialias: true });
+    if (!gl) {
+      console.warn("WebGL not supported for sunlight shader");
+      return;
+    }
 
     var vsSource = [
       "attribute vec2 position;",
@@ -3291,6 +3295,8 @@ body[data-active-theme="dark"] .menu-toggle span {
       "}"
     ].join("\n");
 
+    // Faithful, clearly visible Afternoon Sunlight Shader (shaders.com/collection/afternoon-sunlight/281bf0d2-88b3-413f-8081-2c04cf75a9e2)
+    // Features: 36 deg directional sunlight blur, Worley caustics, and subtle chromatic aberration
     var fsSource = [
       "precision mediump float;",
       "varying vec2 vUv;",
@@ -3302,8 +3308,20 @@ body[data-active-theme="dark"] .menu-toggle span {
       "  return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453);",
       "}",
       "",
-      "// Worley / Cellular Noise for afternoon caustics",
-      "float worley(vec2 p) {",
+      "// 2D Noise",
+      "float noise(vec2 p) {",
+      "  vec2 i = floor(p);",
+      "  vec2 f = fract(p);",
+      "  f = f * f * (3.0 - 2.0 * f);",
+      "  float a = fract(sin(dot(i, vec2(12.9898, 78.233))) * 43758.5453);",
+      "  float b = fract(sin(dot(i + vec2(1.0, 0.0), vec2(12.9898, 78.233))) * 43758.5453);",
+      "  float c = fract(sin(dot(i + vec2(0.0, 1.0), vec2(12.9898, 78.233))) * 43758.5453);",
+      "  float d = fract(sin(dot(i + vec2(1.0, 1.0), vec2(12.9898, 78.233))) * 43758.5453);",
+      "  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);",
+      "}",
+      "",
+      "// Worley Cellular Noise for organic afternoon caustics",
+      "float worley(vec2 p, float t) {",
       "  vec2 n = floor(p);",
       "  vec2 f = fract(p);",
       "  float d = 1.0;",
@@ -3311,12 +3329,34 @@ body[data-active-theme="dark"] .menu-toggle span {
       "    for (int i = -1; i <= 1; i++) {",
       "      vec2 g = vec2(float(i), float(j));",
       "      vec2 o = hash2(n + g);",
-      "      o = 0.5 + 0.45 * sin(u_time * 0.28 + 6.2831 * o);",
+      "      o = 0.5 + 0.45 * sin(t * 0.4 + 6.2831 * o);",
       "      vec2 delta = g + o - f;",
       "      d = min(d, length(delta));",
       "    }",
       "  }",
       "  return d;",
+      "}",
+      "",
+      "// Afternoon Sunlight sampler at a given UV position with 36 deg directional blur",
+      "float sampleLight(vec2 p, vec2 dir, vec2 perp, float t) {",
+      "  float ortho = dot(p, perp);",
+      "",
+      "  // Broad and narrow light beam bands (Linear blur along 36 deg)",
+      "  float b1 = sin(ortho * 3.8 - t * 0.18) * 0.5 + 0.5;",
+      "  float b2 = sin(ortho * 8.2 + t * 0.12) * 0.35 + 0.35;",
+      "  float b3 = sin(ortho * 1.6 - t * 0.08) * 0.5 + 0.5;",
+      "  float beams = b1 * 0.45 + b2 * 0.30 + b3 * 0.25;",
+      "",
+      "  // Organic dappled sunlight caustics moving with breeze",
+      "  float w = worley(p * 2.6 - dir * (t * 0.22), t);",
+      "  float caustics = 1.0 - smoothstep(0.12, 0.82, w);",
+      "",
+      "  // Subtle slow cloud / sheer curtain drift modulation",
+      "  float breeze = noise(p * 1.4 + vec2(t * 0.035, -t * 0.025));",
+      "",
+      "  float val = mix(beams, caustics, 0.42);",
+      "  val *= (0.78 + 0.22 * breeze);",
+      "  return clamp(val, 0.0, 1.0);",
       "}",
       "",
       "void main() {",
@@ -3325,35 +3365,44 @@ body[data-active-theme="dark"] .menu-toggle span {
       "  vec2 uv = st;",
       "  uv.x *= aspect;",
       "",
-      "  // Slanted directional flow (Afternoon sunlight angle: ~45 deg)",
-      "  vec2 dir = vec2(0.85, 0.52);",
-      "  float drift = dot(uv, dir) * 1.5 - u_time * 0.12;",
+      "  // Direction vector for afternoon sunlight (36 degrees)",
+      "  float rad = radians(36.0);",
+      "  vec2 dir = vec2(cos(rad), sin(rad));",
+      "  vec2 perp = vec2(-dir.y, dir.x);",
       "",
-      "  // Multiscale organic caustics",
-      "  float w1 = worley(uv * 2.2 + vec2(drift * 0.4, -u_time * 0.08));",
-      "  float w2 = worley(uv * 4.5 - vec2(drift * 0.2, u_time * 0.05));",
-      "  float caustics = mix(w1, w2, 0.4);",
-      "  caustics = smoothstep(0.12, 0.88, caustics);",
+      "  float t = u_time * 0.75;",
       "",
-      "  // Sun rays & undulating light leaks",
-      "  float rays = sin(uv.x * 3.2 - uv.y * 2.1 + u_time * 0.22) * cos(uv.y * 2.8 + u_time * 0.16);",
-      "  rays = rays * 0.5 + 0.5;",
+      "  // Subtle Chromatic Aberration (R and B offset along perpendicular axis)",
+      "  float chrOffset = 0.014;",
+      "  float lightR = sampleLight(uv - perp * chrOffset, dir, perp, t);",
+      "  float lightG = sampleLight(uv, dir, perp, t);",
+      "  float lightB = sampleLight(uv + perp * chrOffset, dir, perp, t);",
       "",
-      "  // Organic sunlight mask: stronger on the right/upper area, leaving left column clear for text",
-      "  float lightField = smoothstep(0.05, 0.95, st.x * 0.9 + (1.0 - st.y) * 0.6);",
-      "  lightField = clamp(lightField, 0.0, 1.0);",
+      "  // Keep left text column readable while letting warm sun stream across center & right",
+      "  float mask = smoothstep(0.0, 0.75, st.x * 0.95 + (1.0 - st.y) * 0.45);",
+      "  mask = clamp(mask, 0.25, 1.0);",
       "",
-      "  // Skin Tone Palette: porcelain base -> warm sand -> golden afternoon sunlight",
-      "  vec3 colBase = vec3(0.945, 0.929, 0.902); /* #F1EDE6 */       // #faf6f3 porcelain skin",
-      "  vec3 colShadow = vec3(0.921, 0.890, 0.859); /* #EBE3DB */    // #f1e5dd warm shadow",
-      "  vec3 colSunbeam = vec3(1.0, 0.96, 0.89);       // #fff5e3 warm sunlight",
-      "  vec3 colCaustic = vec3(1.0, 0.985, 0.95);      // #fffbfa golden light burst",
+      "  // Harmonious Skin & Warm Golden Afternoon Palette:",
+      "  vec3 colBase   = vec3(0.945, 0.929, 0.902); // #F1EDE6 (Porcelain Base)",
+      "  vec3 colShadow = vec3(0.820, 0.780, 0.741); // #D1C7BD (Sand Contour)",
+      "  vec3 colWarm   = vec3(0.796, 0.678, 0.553); // #CBAD8D (Warm Gold)",
+      "  vec3 colSun    = vec3(1.000, 0.965, 0.880); // Warm Afternoon Sunlight Beam",
+      "  vec3 colGleam  = vec3(1.000, 0.992, 0.965); // Prismatic Sun Glint",
       "",
-      "  vec3 color = mix(colBase, colShadow, caustics * 0.35);",
-      "  color = mix(color, colSunbeam, (1.0 - caustics) * lightField * 0.58);",
-      "  color = mix(color, colCaustic, pow(rays, 2.5) * lightField * 0.38);",
+      "  // Compose color with chromatic fringing",
+      "  vec3 col;",
+      "  col.r = mix(colShadow.r, colSun.r, pow(lightR, 1.4));",
+      "  col.g = mix(colBase.g,   colSun.g, pow(lightG, 1.4));",
+      "  col.b = mix(colWarm.b,   colSun.b, pow(lightB, 1.4));",
       "",
-      "  gl_FragColor = vec4(color, 0.78);",
+      "  // Add brilliant warm sunlight gleam at peak caustic centers",
+      "  float gleam = pow(lightG, 3.0);",
+      "  col = mix(col, colGleam, gleam * 0.65);",
+      "",
+      "  // Clear, distinct opacity so the shader is beautifully and dynamically visible",
+      "  float alpha = clamp((lightG * 0.75 + gleam * 0.25) * mask * 0.85, 0.18, 0.88);",
+      "",
+      "  gl_FragColor = vec4(col, alpha);",
       "}"
     ].join("\n");
 
@@ -3361,15 +3410,28 @@ body[data-active-theme="dark"] .menu-toggle span {
       var s = gl.createShader(type);
       gl.shaderSource(s, src);
       gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+        console.error("Afternoon Sunlight Shader compile error:", gl.getShaderInfoLog(s));
+        gl.deleteShader(s);
+        return null;
+      }
       return s;
     }
 
     var vs = createShader(gl.VERTEX_SHADER, vsSource);
     var fs = createShader(gl.FRAGMENT_SHADER, fsSource);
+    if (!vs || !fs) return;
+
     var prog = gl.createProgram();
     gl.attachShader(prog, vs);
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
+
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      console.error("Afternoon Sunlight Program link error:", gl.getProgramInfoLog(prog));
+      return;
+    }
+
     gl.useProgram(prog);
 
     var buf = gl.createBuffer();
@@ -3387,12 +3449,14 @@ body[data-active-theme="dark"] .menu-toggle span {
     var uTime = gl.getUniformLocation(prog, "u_time");
 
     function resize() {
-      var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      var w = canvas.clientWidth;
-      var h = canvas.clientHeight;
-      if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
-        canvas.width = Math.floor(w * dpr);
-        canvas.height = Math.floor(h * dpr);
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var w = canvas.clientWidth || (canvas.parentElement ? canvas.parentElement.clientWidth : 0) || window.innerWidth;
+      var h = canvas.clientHeight || (canvas.parentElement ? canvas.parentElement.clientHeight : 0) || window.innerHeight;
+      var targetW = Math.max(300, Math.floor(w * dpr));
+      var targetH = Math.max(300, Math.floor(h * dpr));
+      if (canvas.width !== targetW || canvas.height !== targetH) {
+        canvas.width = targetW;
+        canvas.height = targetH;
         gl.viewport(0, 0, canvas.width, canvas.height);
       }
     }
@@ -3411,8 +3475,9 @@ body[data-active-theme="dark"] .menu-toggle span {
     }
 
     window.addEventListener("resize", resize);
+    window.resizeSunlightShader = resize;
 
-    // Pause shader when scrolled out of view to save battery & GPU
+    // Visibility observer to pause when scrolled away
     if ("IntersectionObserver" in window) {
       var obs = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
@@ -3424,15 +3489,17 @@ body[data-active-theme="dark"] .menu-toggle span {
             animFrame = null;
           }
         });
-      }, { threshold: 0.05 });
+      }, { threshold: 0.02 });
       var heroSec = document.getElementById("start");
       if (heroSec) obs.observe(heroSec);
     }
 
+    // Start rendering immediately
+    resize();
     animFrame = requestAnimationFrame(render);
   }
 
-  // Initialize Afternoon Sunlight shader
+    // Initialize Afternoon Sunlight shader
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initAfternoonSunlightShader);
   } else {
