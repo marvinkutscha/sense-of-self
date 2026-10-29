@@ -54,7 +54,7 @@ export const createHero = ({
           for (int i = -1; i <= 1; i++) {
             vec2 g = vec2(float(i), float(j));
             vec2 o = hash2(n + g);
-            o = 0.5 + 0.40 * sin(t * 0.35 + 6.283185 * o);
+            o = 0.5 + 0.42 * sin(t * 0.75 + 6.283185 * o);
             vec2 delta = g + o - f;
             d = min(d, length(delta));
           }
@@ -66,22 +66,28 @@ export const createHero = ({
         float along = uv.x * dir.x + uv.y * dir.y;
         float ortho = uv.x * perp.x + uv.y * perp.y;
 
-        vec2 warp = vec2(
-          sin(ortho * 4.0 + t * 0.18) * 0.06 + sin(along * 2.0 - t * 0.12) * 0.03,
-          cos(along * 2.2 + t * 0.14) * 0.04 + cos(ortho * 2.5 - t * 0.10) * 0.03
+        // Curtain billowing in the breeze: undulating fabric folds
+        vec2 curtainWarp = vec2(
+          sin(ortho * 3.6 + t * 0.85) * 0.12 + sin(along * 2.2 - t * 0.70) * 0.08,
+          cos(along * 2.8 + t * 0.95) * 0.10 + cos(ortho * 2.0 - t * 0.60) * 0.06
         );
-        vec2 p = (vec2(along + warp.y, ortho + warp.x)) * vec2(1.1, 4.5);
+
+        // Soft fabric caustic ripples
+        vec2 p = vec2(along + curtainWarp.y * 0.7, ortho + curtainWarp.x * 0.8) * vec2(1.1, 4.5);
         float w1 = worley(p, t);
-        float w2 = worley(p * 1.6 + vec2(3.1, 1.7), t * 1.1) * 0.45;
+        float w2 = worley(p * 1.6 + vec2(3.1, 1.7), t * 1.2) * 0.45;
         float caustics = w1 * 0.65 + w2 * 0.35;
 
-        float b1 = sin((ortho + warp.x * 0.4) * 11.5 - t * 0.12) * 0.5 + 0.5;
-        float b2 = sin((ortho + warp.x * 0.25) * 21.0 + t * 0.08) * 0.35 + 0.35;
-        float b3 = sin((ortho) * 6.0 - t * 0.05) * 0.5 + 0.5;
+        // Distinct sunlight bands & curtain folds swaying back and forth
+        float foldSway = sin(t * 0.65 + along * 1.5) * 0.25;
+        float b1 = sin((ortho + curtainWarp.x * 0.6 + foldSway) * 11.5 - t * 0.80) * 0.5 + 0.5;
+        float b2 = sin((ortho + curtainWarp.x * 0.4) * 21.0 + t * 0.65) * 0.35 + 0.35;
+        float b3 = sin((ortho + foldSway * 0.5) * 6.0 - t * 0.45) * 0.5 + 0.5;
         float beams = b1 * 0.45 + b2 * 0.28 + b3 * 0.27;
 
+        // Atmospheric beam focus: brightest coming from upper-left
         float beamFocus = exp(-pow((ortho - 0.15) * 0.85, 2.0));
-        float total = (caustics * 0.40 + beams * 0.60) * (0.35 + 0.65 * beamFocus);
+        float total = (caustics * 0.38 + beams * 0.62) * (0.35 + 0.65 * beamFocus);
         return smoothstep(0.18, 0.76, total);
       }
 
@@ -91,32 +97,41 @@ export const createHero = ({
         vec2 uv = st;
         uv.x *= aspect;
 
+        // Direction from upper-left to bottom-right (~40 degrees)
         float rad = radians(40.0);
         vec2 dir = normalize(vec2(cos(rad), -sin(rad)));
         vec2 perp = vec2(-dir.y, dir.x);
 
-        float t = u_time * 0.75;
+        // Faster, lively curtain animation speed (~2.5x previous speed)
+        float t = u_time * 1.85;
 
+        // Subtle chromatic aberration at ray edges
         float chr = 0.010;
         float lightR = sampleLight(uv - perp * chr, dir, perp, t);
         float lightG = sampleLight(uv, dir, perp, t);
         float lightB = sampleLight(uv + perp * chr, dir, perp, t);
 
-        vec3 colBg    = vec3(0.782, 0.778, 0.776);
-        vec3 colTaupe = vec3(0.675, 0.650, 0.645);
-        vec3 colSun   = vec3(0.995, 0.985, 0.965);
-        vec3 colGleam = vec3(1.000, 1.000, 1.000);
+        // Exact Afternoon Sunlight Palette from shaders.com:
+        // Base gray wall: #c4c4c4 | Taupe shadow: #a69f9f | Off-white sunlight: #fcf8f0
+        vec3 colBg    = vec3(0.782, 0.778, 0.776); // Clean neutral light gray wall
+        vec3 colTaupe = vec3(0.675, 0.650, 0.645); // Gentle taupe shadow
+        vec3 colSun   = vec3(0.995, 0.985, 0.965); // Warm luminous sunlight beam
+        vec3 colGleam = vec3(1.000, 1.000, 1.000); // Prismatic core gleam
 
+        // Per-channel mixing with chromatic dispersion
         float r = mix(colTaupe.r, colSun.r, smoothstep(0.18, 0.82, lightR));
         float g = mix(colTaupe.g, colSun.g, smoothstep(0.18, 0.82, lightG));
         float b = mix(colTaupe.b, colSun.b, smoothstep(0.18, 0.82, lightB));
         vec3 col = vec3(r, g, b);
 
+        // Ambient wall mix
         col = mix(colBg, col, 0.68);
 
+        // Prismatic gleam at highlights
         float gleam = smoothstep(0.68, 0.94, lightG);
         col = mix(col, colGleam, gleam * 0.45);
 
+        // Seamless bottom blend into section background (#F1EDE6)
         vec3 colPageBg = vec3(0.945, 0.929, 0.902);
         float bottomFade = smoothstep(0.0, 0.12, st.y);
         col = mix(colPageBg, col, bottomFade);
