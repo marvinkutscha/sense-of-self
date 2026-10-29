@@ -8,6 +8,15 @@ export const createNavigation = ({ theme = 'light', onBookingClick }) => {
   }
 
   header.innerHTML = `
+    <div class="progressive-blur-container" aria-hidden="true">
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+    </div>
     <div class="wrap site-header-wrap">
       <a class="brand" href="#start" aria-label="Sense of Self – Startseite">
         <span class="brand-name">Sense of Self</span>
