@@ -2263,10 +2263,11 @@ body[data-active-theme="dark"] .menu-toggle span {
   gap: 24px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
-  padding: 8px 4px 28px;
+  padding: 16px 8px 32px;
 }
 .testimonials-carousel-track::-webkit-scrollbar {
   display: none;
@@ -2274,15 +2275,21 @@ body[data-active-theme="dark"] .menu-toggle span {
 
 .testimonial-carousel-card {
   flex: 0 0 calc(50% - 12px);
-  min-width: 320px;
+  width: calc(50% - 12px);
+  max-width: calc(50% - 12px);
+  min-width: 0;
   scroll-snap-align: start;
+  scroll-snap-stop: always;
   box-sizing: border-box;
   display: flex;
 }
-@media (max-width: 900px) {
+@media (max-width: 860px) {
   .testimonial-carousel-card {
-    flex: 0 0 calc(100% - 32px);
-    min-width: 280px;
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    scroll-snap-align: start;
   }
 }
 
@@ -3814,7 +3821,7 @@ body[data-active-theme="dark"] .menu-toggle span {
     var track = document.getElementById("testimonialTrack");
     if (!track) return;
     var card = track.querySelector(".testimonial-carousel-card");
-    var stepW = card ? card.offsetWidth + 24 : 360;
+    var stepW = card ? card.offsetWidth + 24 : track.clientWidth;
     track.scrollBy({ left: direction * stepW, behavior: "smooth" });
   }
 
@@ -5036,7 +5043,7 @@ body[data-active-theme="dark"] .menu-toggle span {
     var track = document.getElementById("testimonialTrack");
     if (!track) return;
     var card = track.querySelector(".testimonial-carousel-card");
-    var stepW = card ? card.offsetWidth + 24 : 360;
+    var stepW = card ? card.offsetWidth + 24 : track.clientWidth;
     track.scrollBy({ left: direction * stepW, behavior: "smooth" });
   }
 
