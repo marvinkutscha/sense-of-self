@@ -45,12 +45,12 @@ export const Typography = () => {
   container.style.margin = '0 auto';
   container.innerHTML = `
     <h2 style="font-family: var(--font-headline); margin-bottom: 8px;">Typografie & Schriftsystem</h2>
-    <p style="color: var(--text-copy); margin-bottom: 32px;">Geist Variable Font (100–900) für ein konsistentes, hochmodernes Schriftbild.</p>
+    <p style="color: var(--text-copy); margin-bottom: 32px;">Marcellus für Headlines & Geist für Fließtexte.</p>
 
     <div style="background:#fff; border-radius:24px; padding:36px; border:1px solid var(--border-subtle); margin-bottom:24px;">
       <span class="eyebrow">Headline Font</span>
       <h1 style="font-size: 2.8rem; margin: 10px 0 16px;">Du bist vollkommen. Genau so, wie du bist.</h1>
-      <p style="font-size: 0.92rem; color: var(--text-muted);">Geist Headline (weight: 500, letter-spacing: -0.02em)</p>
+      <p style="font-size: 0.92rem; color: var(--text-muted);">Marcellus Serif (weight: 400, letter-spacing: 0.015em)</p>
     </div>
 
     <div style="background:#fff; border-radius:24px; padding:36px; border:1px solid var(--border-subtle);">
