@@ -1,0 +1,117 @@
+@import '../../styles/tokens.css';
+
+.booking-preview-container {
+  padding: 40px 20px;
+  background: var(--swatch-cream);
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.booking-dialog-card {
+  background: #ffffff;
+  border-radius: var(--border-radius-dialog);
+  max-width: 620px;
+  width: 100%;
+  padding: 36px 32px;
+  box-shadow: 0 20px 60px rgba(58, 45, 40, 0.12);
+  border: 1px solid var(--border-subtle);
+}
+
+.step-badge {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--swatch-dark);
+}
+
+.conv-tiers-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.conv-tier-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  border: 1.5px solid var(--border-subtle);
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.conv-tier-card:hover {
+  border-color: #3A2D28;
+}
+
+.conv-tier-card.selected {
+  border: 2px solid #3A2D28 !important;
+  background: #FAF7F5 !important;
+}
+
+.tier-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(58, 45, 40, 0.3);
+  margin-top: 2px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.conv-tier-card.selected .tier-radio {
+  border-color: #3A2D28;
+  background: #3A2D28;
+}
+
+.conv-tier-card.selected .tier-radio::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.tier-info {
+  flex: 1;
+}
+
+.tier-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.tier-price-badge {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #3A2D28;
+  background: rgba(203, 173, 141, 0.2);
+  padding: 2px 10px;
+  border-radius: var(--border-radius-pill);
+}
+
+.booking-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 20px;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 0;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}

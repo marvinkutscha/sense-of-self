@@ -4,3 +4,9 @@
 index.html.backup
 shader.gif
 *.mp4
+node_modules/
+storybook-static/
+.storybook-build/
+
+*storybook.log
+debug-storybook.log

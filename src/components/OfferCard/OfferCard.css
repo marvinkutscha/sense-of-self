@@ -1,0 +1,57 @@
+@import '../../styles/tokens.css';
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 28px;
+  max-width: var(--wrap-max-width);
+  margin: 0 auto;
+}
+
+.offer-card {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-card);
+  padding: 36px 32px;
+  box-shadow: var(--box-shadow-card);
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.offer-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--box-shadow-hover);
+}
+
+.card-title {
+  font-size: 1.5rem;
+  margin: 6px 0 12px;
+  color: var(--text-dark);
+}
+
+.card-price-badge {
+  display: inline-block;
+  background: rgba(203, 173, 141, 0.2);
+  color: var(--swatch-dark);
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--border-radius-pill);
+  font-size: 0.98rem;
+  margin-bottom: 16px;
+}
+
+.card-desc {
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--text-copy);
+  margin-bottom: 24px;
+}
+
+.btn-card-details {
+  background: #000000;
+  color: #ffffff;
+  width: 100%;
+  border-radius: var(--border-radius-pill);
+}

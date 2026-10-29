@@ -1,0 +1,35 @@
+{
+  "name": "innersensuality",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marvinkutscha/sense-of-self.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/marvinkutscha/sense-of-self/issues"
+  },
+  "homepage": "https://github.com/marvinkutscha/sense-of-self#readme",
+  "devDependencies": {
+    "storybook": "^10.6.5",
+    "@storybook/html-vite": "^10.6.5",
+    "@chromatic-com/storybook": "latest",
+    "@storybook/addon-vitest": "^10.6.5",
+    "@storybook/addon-a11y": "^10.6.5",
+    "@storybook/addon-docs": "^10.6.5",
+    "vitest": "latest",
+    "@vitest/browser-playwright": "latest",
+    "@vitest/coverage-v8": "latest",
+    "playwright": "latest"
+  }
+}

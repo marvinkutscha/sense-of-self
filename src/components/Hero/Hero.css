@@ -1,0 +1,58 @@
+@import '../../styles/tokens.css';
+
+.sunlight-hero {
+  position: relative !important;
+  min-height: calc(100vh - 76px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  align-items: flex-start !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  background: var(--bg-primary);
+}
+
+.sunlight-shader-canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+.sunlight-hero-wrap {
+  position: relative !important;
+  z-index: 2 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 0 var(--edge-padding) var(--edge-padding) !important;
+  box-sizing: border-box !important;
+}
+
+.hero-left-col {
+  max-width: 520px !important;
+  width: 38vw !important;
+  text-align: left !important;
+  margin: 0 !important;
+}
+
+.hero-title {
+  font-family: var(--font-headline) !important;
+  font-size: clamp(2.2rem, 3.8vw, 3.6rem) !important;
+  line-height: 1.15 !important;
+  margin: 0 0 18px !important;
+  color: var(--text-dark) !important;
+  font-weight: 425 !important;
+}
+
+.hero-lead {
+  font-family: var(--font-body) !important;
+  font-size: clamp(1.05rem, 1.25vw, 1.2rem) !important;
+  line-height: 1.6 !important;
+  color: var(--text-copy) !important;
+  margin: 0 !important;
+}

@@ -1,0 +1,96 @@
+@import '../../styles/tokens.css';
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: rgba(241, 237, 230, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.site-header[data-theme="dark"] {
+  background: rgba(58, 45, 40, 0.92);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.site-header-wrap {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 76px !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 var(--edge-padding) !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.site-header .brand {
+  display: inline-flex !important;
+  align-items: center !important;
+  font-size: 0.98rem !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+}
+
+.site-header .brand-name {
+  font-family: var(--font-headline) !important;
+  font-size: 0.98rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--text-dark) !important;
+  line-height: 1 !important;
+}
+
+.site-header[data-theme="dark"] .brand-name {
+  color: var(--text-light) !important;
+}
+
+.site-header .nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.site-header .nav a {
+  font-family: var(--font-body);
+  font-size: 0.98rem;
+  color: var(--text-dark);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.site-header .nav a:hover {
+  color: var(--text-muted);
+}
+
+.site-header[data-theme="dark"] .nav a {
+  color: var(--text-light);
+}
+
+.site-header[data-theme="dark"] .nav a:hover {
+  color: var(--text-light-muted);
+}
+
+.site-header .btn-nav {
+  background: #000000;
+  color: #ffffff;
+  padding: 10px 22px;
+  border-radius: var(--border-radius-pill);
+}
+
+.site-header[data-theme="dark"] .btn-nav {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.menu-toggle {
+  display: none;
+}
