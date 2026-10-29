@@ -20,7 +20,8 @@ body {
 
 h1, h2, h3, h4 {
   font-family: var(--font-headline);
-  font-weight: 425;
+  font-weight: 500;
+  letter-spacing: -0.02em;
   color: var(--text-dark);
   margin-top: 0;
 }

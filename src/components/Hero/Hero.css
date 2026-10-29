@@ -46,7 +46,8 @@
   line-height: 1.15 !important;
   margin: 0 0 18px !important;
   color: var(--text-dark) !important;
-  font-weight: 425 !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em;
 }
 
 .hero-lead {
