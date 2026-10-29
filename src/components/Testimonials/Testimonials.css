@@ -3,6 +3,7 @@
 .erfahrungen-section {
   padding: 80px 0;
   background: var(--swatch-gold);
+  overflow-x: clip;
 }
 
 .erfahrungen-wrap {
@@ -43,47 +44,70 @@
   color: #ffffff;
 }
 
+.testimonials-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  margin: 28px 0 16px;
+}
+
 .testimonials-carousel-track {
   display: flex;
-  gap: 24px;
+  gap: 28px;
   overflow-x: auto;
+  overflow-y: hidden;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   scrollbar-width: none;
-  padding: 16px 8px 32px;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px max(5vw, calc((100vw - var(--wrap-max-width)) / 2 + 24px)) 36px;
 }
 .testimonials-carousel-track::-webkit-scrollbar {
   display: none;
 }
 
 .testimonial-carousel-card {
-  flex: 0 0 calc(50% - 12px);
-  width: calc(50% - 12px);
-  max-width: calc(50% - 12px);
+  flex: 0 0 clamp(340px, 38vw, 480px);
+  width: clamp(340px, 38vw, 480px);
+  max-width: clamp(340px, 38vw, 480px);
   min-width: 0;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   box-sizing: border-box;
+  display: flex;
+  cursor: pointer;
+  outline: none;
+  border-radius: 24px;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 768px) {
   .testimonial-carousel-card {
-    flex: 0 0 100%;
-    width: 100%;
-    max-width: 100%;
+    flex: 0 0 clamp(280px, 82vw, 360px);
+    width: clamp(280px, 82vw, 360px);
+    max-width: clamp(280px, 82vw, 360px);
   }
 }
 
 .testimonial-card-box {
   background: #ffffff !important;
+  border: 1px solid rgba(58, 45, 40, 0.12) !important;
   border-radius: var(--border-radius-card);
   padding: 36px 32px;
-  box-shadow: var(--box-shadow-card);
+  box-shadow: 0 14px 36px rgba(58, 45, 40, 0.06);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  width: 100%;
   box-sizing: border-box;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s ease;
+  user-select: none;
+}
+
+.testimonial-carousel-card:hover .testimonial-card-box {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 50px rgba(58, 45, 40, 0.12);
+  border-color: #3A2D28;
 }
 
 .quote-lead-symbol {
@@ -113,5 +137,14 @@
   border: 0;
   font-weight: 600;
   color: #3A2D28;
-  cursor: pointer;
+  border-bottom: 1.5px solid rgba(58, 45, 40, 0.3);
+  padding: 4px 0;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.testimonial-carousel-card:hover .btn-open-story-dialog {
+  border-bottom-color: #3A2D28;
+  color: #000000;
+  transform: translateX(4px);
 }

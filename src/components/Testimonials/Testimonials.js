@@ -44,44 +44,55 @@ export const createTestimonialsSection = ({ onOpenStory }) => {
           <button type="button" class="carousel-arrow-btn next-btn" aria-label="Nächste">→</button>
         </div>
       </div>
+    </div>
 
-      <div class="testimonials-carousel-wrapper">
-        <div class="testimonials-carousel-track">
-          ${reviews.map(r => `
-            <div class="testimonial-carousel-card">
-              <div class="testimonial-card-box">
+    <div class="testimonials-carousel-wrapper">
+      <div class="testimonials-carousel-track">
+        ${reviews.map(r => `
+          <div class="testimonial-carousel-card" data-story="${r.id}" role="button" tabindex="0" aria-label="Erfahrungsbericht von ${r.name} öffnen">
+            <div class="testimonial-card-box">
+              <div>
+                <div class="quote-lead-symbol">“</div>
+                <blockquote class="testimonial-card-quote">${r.quote}</blockquote>
+              </div>
+              <div class="testimonial-card-bottom">
                 <div>
-                  <div class="quote-lead-symbol">“</div>
-                  <blockquote class="testimonial-card-quote">${r.quote}</blockquote>
+                  <div style="font-weight:700; color:#000;">${r.name}</div>
+                  <div style="font-size:0.88rem; color:#A48374;">${r.meta}</div>
                 </div>
-                <div class="testimonial-card-bottom">
-                  <div>
-                    <div style="font-weight:700; color:#000;">${r.name}</div>
-                    <div style="font-size:0.88rem; color:#A48374;">${r.meta}</div>
-                  </div>
-                  <button type="button" class="btn-open-story-dialog" data-story="${r.id}">
-                    <span>Ganzen Bericht lesen →</span>
-                  </button>
+                <div class="btn-open-story-dialog">
+                  <span>Ganzen Bericht lesen →</span>
                 </div>
               </div>
             </div>
-          `).join('')}
-        </div>
+          </div>
+        `).join('')}
       </div>
     </div>
   `;
 
   const track = section.querySelector('.testimonials-carousel-track');
   section.querySelector('.prev-btn').addEventListener('click', () => {
-    track.scrollBy({ left: -track.clientWidth, behavior: 'smooth' });
+    const card = track.querySelector('.testimonial-carousel-card');
+    const stepW = card ? card.offsetWidth + 28 : 420;
+    track.scrollBy({ left: -stepW, behavior: 'smooth' });
   });
   section.querySelector('.next-btn').addEventListener('click', () => {
-    track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
+    const card = track.querySelector('.testimonial-carousel-card');
+    const stepW = card ? card.offsetWidth + 28 : 420;
+    track.scrollBy({ left: stepW, behavior: 'smooth' });
   });
 
-  section.querySelectorAll('.btn-open-story-dialog').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (onOpenStory) onOpenStory(btn.getAttribute('data-story'));
+  section.querySelectorAll('.testimonial-carousel-card').forEach(card => {
+    const storyId = card.getAttribute('data-story');
+    card.addEventListener('click', () => {
+      if (onOpenStory) onOpenStory(storyId);
+    });
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (onOpenStory) onOpenStory(storyId);
+      }
     });
   });
 
